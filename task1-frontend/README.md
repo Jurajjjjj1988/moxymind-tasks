@@ -1,14 +1,9 @@
 # Task 1 - Frontend automation (saucedemo)
 
-Playwright + TypeScript, Page Object Model, fixtures.
-Four tests covering the main user journeys on https://www.saucedemo.com.
-
-## Why these tests
-
-1. **Login - standard_user** - the gate to every other flow. Most hit code path on the site.
-2. **Login - locked_out_user** - negative auth path. If it regresses, blocked accounts get back in.
-3. **Add to cart** - core e-commerce primitive. No cart, no revenue.
-4. **End-to-end checkout** - smoke test for the full purchase funnel.
+Playwright + TS. Four tests on https://www.saucedemo.com covering login
+(positive and negative), cart, and a full end-to-end checkout. POMs are
+wired through a Playwright fixture so a test can just request
+`inventoryPage` or `cartPage` and get a ready instance.
 
 ## Run
 
@@ -18,25 +13,42 @@ npx playwright install chromium
 npm test
 ```
 
-Other commands:
+`npm run test:headed` if you want to see it, `npm run test:ui` for the
+picker, `npm run report` after a run to open the HTML report.
 
-| Command | What it does |
-| --- | --- |
-| `npm test` | Headless run, list + HTML reporter |
-| `npm run test:headed` | Visible browser |
-| `npm run test:ui` | Interactive UI mode |
-| `npm run report` | Open the last HTML report |
+## The four tests, and why
 
-## Structure
+The login positive test is the gate for everything else. If `standard_user`
+can't log in, the whole funnel is dead, so it runs first in CI and fails
+loud.
+
+The negative login (`locked_out_user`) guards the lockout message. It's
+boring to write but the day it regresses, blocked accounts walk straight
+in - that one tends to be the post-incident retro everyone remembers.
+
+Cart and checkout I treated as one logical pair. Cart proves "can the user
+collect items", checkout proves "can the user actually finish buying". I
+keep them in separate spec files because they fail for very different
+reasons (cart = state management, checkout = form + routing), but
+conceptually they are the same answer: money flows.
+
+What I considered and skipped: `problem_user` (broken images, would be a
+nice visual-regression slot) and `performance_glitch_user` (deliberately
+slow login, natural fit for a flake/perf budget test). Both are worth
+having in a real suite. Four tests felt like the right size for the brief.
+
+## Selectors
+
+saucedemo exposes a `data-test` attribute on everything useful, so all
+locators go through `page.getByTestId(...)`. Playwright defaults to
+`data-testid`, hence the `testIdAttribute: 'data-test'` override in the
+config. CSS classes and `nth()` are avoided - they break on every markup
+change.
+
+## Layout
 
 ```
-pages/        Page Objects (one file per page)
-fixtures/     Playwright fixtures wiring the POMs together
-tests/        Spec files, grouped by feature
+pages/        one POM per screen
+fixtures/     Playwright fixture extending base test with the POMs
+tests/        one spec per feature
 ```
-
-## Selector strategy
-
-Uses `data-test` attributes via `page.getByTestId(...)`. Selectors that follow the
-visible DOM (CSS classes, `nth()`, deep paths) are avoided - they break on every
-small markup change.
