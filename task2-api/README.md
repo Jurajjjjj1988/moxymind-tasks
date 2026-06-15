@@ -23,17 +23,17 @@ REQRES_BASE_URL=https://reqres.in/api REQRES_API_KEY=<your_key> npm test
 
 ## Why these tests
 
-1. **GET /users?page=2 - pagination metadata** - asserts the right page is
-   returned and the row count matches `per_page` (not `total`). Catches
-   off-by-one and page-size regressions.
-2. **GET /users - cross-page total** - sums `data.length` across both pages
-   and compares to `total`. Catches silent drift where pagination math stops
-   adding up.
-3. **GET /users - Zod schema** - validates every field on every user. Catches
-   new nullable fields, renamed keys, or shape drift.
-4. **POST /users - 3 payloads, data-driven** - `describe.each` over
-   `data/users.json`. Checks status 201, echo of `name`/`job`, valid recent
-   `createdAt`, response time, and the response schema.
+- **GET pagination metadata** - page 2, asserts `data.length === per_page`
+  and that the first two `last_name` values are "Lawson" and "Ferguson".
+  A classic off-by-one sentinel.
+- **GET cross-page total** - sums rows across all pages and compares to
+  `total`. Catches pagination math drift.
+- **GET schema** - the whole response through Zod. The most important test
+  in the file - new nullable fields, renamed keys, or type changes show up
+  here in one shot.
+- **POST data-driven** - three payloads via `describe.each`. Per payload:
+  status 201, echo of name/job, `createdAt` younger than 60s, response time,
+  and the response schema.
 
 ## Run
 

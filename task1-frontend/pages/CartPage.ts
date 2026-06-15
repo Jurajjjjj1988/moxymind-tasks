@@ -12,6 +12,6 @@ export class CartPage {
   }
 
   itemByName(name: string) {
-    return this.page.locator('.cart_item', { hasText: name });
+    return this.items.filter({ hasText: name });
   }
 }
