@@ -8,8 +8,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true,
-    "types": ["node", "mocha", "@wdio/globals/types", "@wdio/mocha-framework", "expect-webdriverio"]
+    "noUnusedLocals": true
   },
-  "include": ["tests", "pages", "config", "wdio.conf.ts"]
+  "include": ["tests", "pages", "fixtures", "playwright.config.ts"]
 }

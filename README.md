@@ -7,23 +7,26 @@ with its own README and `npm test`.
 | --- | --- | --- |
 | 1. Frontend automation (saucedemo) | [`task1-frontend`](./task1-frontend) | Playwright + TypeScript, POM, fixtures |
 | 2. API automation (reqres.in) | [`task2-api`](./task2-api) | Vitest + TypeScript, native fetch, Zod schemas, local mock |
-| 3. Mobile automation (Android Calculator) | [`task3-mobile`](./task3-mobile) | WebdriverIO v8 + Appium v2 + Mocha, UIAutomator2 driver |
+| 3. Mobile automation (Wikipedia mobile web) | [`task3-mobile`](./task3-mobile) | Playwright device emulation, iPhone 13 (WebKit) + Pixel 5 (Chromium) |
 
 ## Quick start
 
-Each task is self-contained. Open the folder, install, run.
+Each task is self-contained.
 
 ```bash
 cd task1-frontend && npm install && npx playwright install chromium && npm test
 cd ../task2-api    && npm install && npm test
-cd ../task3-mobile && npm install && npm test     # needs Appium + emulator, see README
+cd ../task3-mobile && npm install && npx playwright install chromium webkit && npm test
 ```
 
-## Why three folders, not three repos
+## A note on Task 3
 
-The brief asks for GitHub-published, runnable solutions. A single repo is easier
-to clone and review than three. Each task still has an independent `package.json`
-and its own README, so any one task can be lifted out and run standalone.
+The brief allows any SUT, including built-in apps like Calculator. The chosen
+target is the mobile web layer of Wikipedia rather than a native Android app
+with Appium - the per-task README explains the tradeoff. For native-only
+flows (in-app purchase, push notifications, biometric prompts) the right tool
+is Appium or Maestro; the submission would not show anything different about
+my testing approach by spinning up a second runtime.
 
 ## Author
 

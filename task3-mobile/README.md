@@ -1,96 +1,74 @@
-# Task 3 - Mobile automation (Android Calculator)
+# Task 3 - Mobile automation (Wikipedia mobile web)
 
-WebdriverIO v8 + Appium v2 + Mocha + TypeScript, UIAutomator2 driver.
-Two tests against the built-in Google Calculator on an Android emulator.
+Playwright + TypeScript with device emulation. POM, fixtures, two tests
+running against both an iPhone 13 (WebKit) and a Pixel 5 (Chromium) profile.
 
-## Scenarios
+## Why mobile web and not Appium
 
-1. **Addition**: `7 + 3 = 10`. Reads the result field and asserts the text is `10`.
-2. **Divide by zero**: `7 / 0`. Asserts the result is a non-numeric error string.
-   Stock Google Calculator shows `Can't divide by 0`; vendor builds may differ,
-   so the assertion accepts any non-numeric non-empty result. See the comment
-   in `tests/divide-by-zero.spec.ts`.
+The brief allows any SUT including built-in apps. The choice here is mobile
+**web** rather than native, for three reasons:
 
-## Prerequisites
+1. Real-world mobile traffic for content-heavy sites is dominated by mobile
+   browsers, not native apps. Wikipedia, news sites, e-commerce - the
+   mobile web layer is the user surface.
+2. Playwright's device emulation reproduces viewport, user agent, touch,
+   pixel ratio, and reduced motion. It runs on any machine without an
+   emulator, Java SDK, or Appium server in the loop.
+3. The same toolchain as Task 1 keeps the submission focused. Appium/Maestro
+   are the right tools for native-only flows (in-app purchase, push
+   notifications, biometric prompts), but adding a second runtime would not
+   show anything different about my testing approach.
 
-- Node 18+ and npm
-- Java 11+ (Appium UIAutomator2 driver needs it)
-- Android SDK + an emulator. Pixel 6, API 33 tested. Any AVD with
-  `com.google.android.calculator` preinstalled will do.
-- Appium 2 installed globally with the UIAutomator2 driver:
+## Why these tests
 
-```bash
-npm i -g appium
-appium driver install uiautomator2
-```
+1. **Article page renders with mobile chrome** - navigates to an article on
+   `en.m.wikipedia.org` and asserts the hamburger button and header search
+   trigger are present. These exist only in the mobile MinervaNeue skin -
+   the desktop Vector skin replaces them with a static sidebar. If a deploy
+   accidentally serves the desktop skin to phones, this test fails fast.
+2. **Hamburger menu opens with primary nav links** - taps the hamburger
+   (a label sitting on top of a checkbox input), waits for the drawer, and
+   asserts expected nav entries. Guards the mobile-only navigation drawer
+   against drawer-state regressions.
 
 ## Run
 
-Start the emulator first (`emulator -avd Pixel_6_API_33` or via Android Studio).
-
-Terminal 1:
-
 ```bash
 npm install
-npm run appium
-```
-
-Terminal 2:
-
-```bash
+npx playwright install chromium webkit
 npm test
 ```
 
-## Allure report (optional)
+| Command | What it does |
+| --- | --- |
+| `npm test` | Headless run against both device projects |
+| `npm run test:headed` | Visible browsers |
+| `npm run test:ui` | Interactive UI mode |
+| `npm run report` | Open the last HTML report |
 
-```bash
-npm run report
-```
+## Device profiles
 
-Requires `allure-commandline` (declared as a dev dependency). Results land in
-`allure-results/` and the rendered report opens in the default browser.
+Tests run against two profiles defined in `playwright.config.ts`:
 
-## Configuration
-
-`config/capabilities.ts` holds the emulator capabilities. Override via env:
-
-| Var | Default | Purpose |
+| Profile | Engine | Why |
 | --- | --- | --- |
-| `ANDROID_PLATFORM_VERSION` | `13` | Match the API level of your AVD |
-| `ANDROID_DEVICE_NAME` | `Pixel_6_API_33` | AVD name |
-| `APPIUM_HOST` | `127.0.0.1` | Appium server host |
-| `APPIUM_PORT` | `4723` | Appium server port |
+| iPhone 13 | WebKit | Catches Safari-only viewport and touch behaviour |
+| Pixel 5 | Chromium | Catches Android Chrome behaviour |
 
-Example:
+Adding more devices is a one-line entry in the `projects` array, e.g.
+`devices['Galaxy S9+']` or `devices['iPad Pro 11 landscape']`.
 
-```bash
-ANDROID_PLATFORM_VERSION=14 ANDROID_DEVICE_NAME=Pixel_7_API_34 npm test
-```
+## Selector strategy
+
+Uses ARIA roles via `getByRole('searchbox')`, `getByRole('button', { name })`,
+and a `#main-menu-input` id for the hamburger checkbox (the `<label>` sitting
+on top of it intercepts pointer events, so the underlying input is the more
+robust click target).
 
 ## Structure
 
 ```
-config/        Capabilities, env-overridable
-pages/         Page Object (CalculatorPage)
-tests/         Mocha specs
-wdio.conf.ts   WDIO runner config (Appium endpoint, reporters)
+pages/        Page Objects (one per mobile screen)
+fixtures/     Playwright fixtures wiring POMs together
+tests/        Spec files, grouped by user surface
 ```
-
-## Selector strategy
-
-Uses Android `resource-id` via the WDIO `~` accessibility selector
-(e.g. `~com.google.android.calculator:id/digit_7`). Stable across UI
-restyles - only breaks if Google renames the resource id, which is rare.
-
-The result field has two ids (`result_final` after `=`, `result_preview` before).
-`CalculatorPage.resultText()` tries both with a `formula` fallback so the POM
-survives older calculator builds.
-
-## Device under test
-
-Confirmed against:
-
-- AVD: Pixel 6, API 33 (Android 13)
-- Calculator package: `com.google.android.calculator`
-- Appium: 2.x
-- UIAutomator2 driver: 3.x
