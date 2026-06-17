@@ -1,28 +1,19 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 export class CheckoutPage {
-  readonly page: Page;
-  readonly firstName: Locator;
-  readonly lastName: Locator;
-  readonly postalCode: Locator;
-  readonly continueButton: Locator;
-  readonly finish: Locator;
-  readonly completeHeader: Locator;
+  constructor(private readonly page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-    this.firstName = page.getByTestId('firstName');
-    this.lastName = page.getByTestId('lastName');
-    this.postalCode = page.getByTestId('postalCode');
-    this.continueButton = page.getByTestId('continue');
-    this.finish = page.getByTestId('finish');
-    this.completeHeader = page.getByTestId('complete-header');
-  }
+  firstName = () => this.page.getByTestId('firstName');
+  lastName = () => this.page.getByTestId('lastName');
+  postalCode = () => this.page.getByTestId('postalCode');
+  continueButton = () => this.page.getByTestId('continue');
+  finishButton = () => this.page.getByTestId('finish');
+  completeHeader = () => this.page.getByTestId('complete-header');
 
-  async fillShippingInfo(first: string, last: string, zip: string) {
-    await this.firstName.fill(first);
-    await this.lastName.fill(last);
-    await this.postalCode.fill(zip);
-    await this.continueButton.click();
+  async fillShipping(first: string, last: string, zip: string) {
+    await this.firstName().fill(first);
+    await this.lastName().fill(last);
+    await this.postalCode().fill(zip);
+    await this.continueButton().click();
   }
 }

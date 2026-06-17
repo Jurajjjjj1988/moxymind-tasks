@@ -1,17 +1,9 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 export class CartPage {
-  readonly page: Page;
-  readonly items: Locator;
-  readonly checkout: Locator;
+  constructor(private readonly page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-    this.items = page.getByTestId('inventory-item');
-    this.checkout = page.getByTestId('checkout');
-  }
-
-  itemByName(name: string) {
-    return this.items.filter({ hasText: name });
-  }
+  items = () => this.page.getByTestId('inventory-item');
+  itemByName = (name: string) => this.items().filter({ hasText: name });
+  checkoutButton = () => this.page.getByTestId('checkout');
 }

@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true
   },
-  "include": ["tests", "pages", "fixtures", "playwright.config.ts"]
+  "include": ["tests", "pages", "playwright.config.ts"]
 }

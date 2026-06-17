@@ -1,25 +1,52 @@
-import { expect } from '@playwright/test';
-import { test, USERS } from '../fixtures/pages';
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
+import { CartPage } from '../pages/CartPage';
+import { CheckoutPage } from '../pages/CheckoutPage';
 
-// End-to-end purchase. If this passes, login + inventory + cart + checkout all work.
-// This is the smoke test that proves "money flows".
-test('end-to-end checkout completes successfully', async ({
-  loginPage,
-  inventoryPage,
-  cartPage,
-  checkoutPage,
-  page,
-}) => {
-  await loginPage.open();
-  await loginPage.loginAs(USERS.standard.name, USERS.standard.pass);
+test('complete a checkout', async ({ page }) => {
+  const login = new LoginPage(page);
+  const inventory = new InventoryPage(page);
+  const cart = new CartPage(page);
+  const checkout = new CheckoutPage(page);
 
-  await inventoryPage.addByName('Sauce Labs Backpack');
-  await inventoryPage.goToCart();
-  await cartPage.checkout.click();
+  await test.step('Log in as standard_user', async () => {
+    await login.open();
+    await login.login('standard_user', 'secret_sauce');
+    await expect(inventory.items().first()).toBeVisible();
+  });
 
-  await checkoutPage.fillShippingInfo('Juraj', 'K', '811 08');
-  await checkoutPage.finish.click();
+  await test.step('Add Backpack to cart', async () => {
+    await inventory.addItem('Sauce Labs Backpack');
+  });
 
-  await expect(page).toHaveURL(/.*checkout-complete\.html/);
-  await expect(checkoutPage.completeHeader).toHaveText('Thank you for your order!');
+  await test.step('Open the cart', async () => {
+    await inventory.openCart();
+  });
+
+  await test.step('Start checkout', async () => {
+    await expect(cart.checkoutButton()).toBeEnabled();
+    await cart.checkoutButton().click();
+  });
+
+  await test.step('Shipping form is shown', async () => {
+    await expect(checkout.firstName()).toBeVisible();
+    await expect(checkout.lastName()).toBeVisible();
+    await expect(checkout.postalCode()).toBeVisible();
+  });
+
+  await test.step('Fill shipping info', async () => {
+    await checkout.fillShipping('Juraj', 'K', '81108');
+  });
+
+  await test.step('Finish the order', async () => {
+    await expect(checkout.finishButton()).toBeEnabled();
+    await checkout.finishButton().click();
+  });
+
+  await test.step('Confirmation page is shown', async () => {
+    await expect(page).toHaveURL(/checkout-complete\.html/);
+    await expect(checkout.completeHeader()).toBeVisible();
+    await expect(checkout.completeHeader()).toHaveText('Thank you for your order!');
+  });
 });

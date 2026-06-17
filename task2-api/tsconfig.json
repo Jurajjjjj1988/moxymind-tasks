@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["vitest/globals"]
   },
-  "include": ["tests", "schemas", "data"]
+  "include": ["tests", "data"]
 }

@@ -1,22 +1,38 @@
-import { expect } from '@playwright/test';
-import { test, USERS } from '../fixtures/pages';
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+import { InventoryPage } from '../pages/InventoryPage';
+import { CartPage } from '../pages/CartPage';
 
-// Cart is the core e-commerce primitive. No cart = no orders = no revenue.
-test.describe('Cart', () => {
-  test.beforeEach(async ({ loginPage }) => {
-    await loginPage.open();
-    await loginPage.loginAs(USERS.standard.name, USERS.standard.pass);
+test('add two items to cart', async ({ page }) => {
+  const login = new LoginPage(page);
+  const inventory = new InventoryPage(page);
+  const cart = new CartPage(page);
+
+  await test.step('Log in as standard_user', async () => {
+    await login.open();
+    await login.login('standard_user', 'secret_sauce');
+    await expect(inventory.items().first()).toBeVisible();
   });
 
-  test('adding two items updates badge and shows them in cart', async ({ inventoryPage, cartPage }) => {
-    await inventoryPage.addByName('Sauce Labs Backpack');
-    await inventoryPage.addByName('Sauce Labs Bike Light');
+  await test.step('Add Backpack to cart', async () => {
+    await inventory.addItem('Sauce Labs Backpack');
+  });
 
-    await expect(inventoryPage.cartBadge).toHaveText('2');
+  await test.step('Add Bike Light to cart', async () => {
+    await inventory.addItem('Sauce Labs Bike Light');
+  });
 
-    await inventoryPage.goToCart();
-    await expect(cartPage.items).toHaveCount(2);
-    await expect(cartPage.itemByName('Sauce Labs Backpack')).toBeVisible();
-    await expect(cartPage.itemByName('Sauce Labs Bike Light')).toBeVisible();
+  await test.step('Cart badge shows 2', async () => {
+    await expect(inventory.cartBadge()).toBeVisible();
+    await expect(inventory.cartBadge()).toHaveText('2');
+  });
+
+  await test.step('Open the cart', async () => {
+    await inventory.openCart();
+  });
+
+  await test.step('Both items are in the cart', async () => {
+    await expect(cart.itemByName('Sauce Labs Backpack')).toBeVisible();
+    await expect(cart.itemByName('Sauce Labs Bike Light')).toBeVisible();
   });
 });
