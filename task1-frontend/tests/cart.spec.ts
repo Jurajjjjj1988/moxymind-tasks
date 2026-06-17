@@ -3,7 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
 
-test('add two items to cart', async ({ page }) => {
+test('add 2 items to cart', async ({ page }) => {
   const login = new LoginPage(page);
   const inventory = new InventoryPage(page);
   const cart = new CartPage(page);

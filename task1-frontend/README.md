@@ -26,6 +26,6 @@ Add Backpack + Bike Light, badge reads 2, both items show up on the cart page.
 
 Login through to the "Thank you for your order!" confirmation.
 
-One POM per screen in `pages/` (Login, Inventory, Cart, Checkout).
-One spec per feature in `tests/`.
+1 POM per screen in `pages/` (Login, Inventory, Cart, Checkout).
+1 spec per feature in `tests/`.
 Selectors go through `getByTestId`. The `testIdAttribute` override in the config makes it match Saucedemo's `data-test`.

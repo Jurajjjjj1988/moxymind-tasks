@@ -11,11 +11,11 @@ npm install
 npm test
 ```
 
-Two specs.
+2 specs.
 
 `list-users.spec.ts`
 
-`GET /users?page=2`. Checks the 200, that `total` is 12, that the first two users on page 2 are Lukáč and Polák, and that `data.length` matches the returned `per_page`.
+`GET /users?page=2`. Checks the 200, that `total` is 12, that the first 2 users on page 2 are Lukáč and Polák, and that `data.length` matches the returned `per_page`.
 
 `create-user.spec.ts`
 
