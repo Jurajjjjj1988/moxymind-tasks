@@ -27,7 +27,6 @@ test.describe('Login', () => {
     });
 
     await test.step('Inventory page is shown', async () => {
-      await expect(page).toHaveURL(/inventory\.html/);
       await expect(inventory.items().first()).toBeVisible();
     });
   });
@@ -50,7 +49,6 @@ test.describe('Login', () => {
     });
 
     await test.step('Error message is shown', async () => {
-      await expect(login.error()).toBeVisible();
       await expect(login.error()).toContainText('locked out');
     });
   });

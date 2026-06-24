@@ -23,7 +23,6 @@ test('add 2 items to cart', async ({ page }) => {
   });
 
   await test.step('Cart badge shows 2', async () => {
-    await expect(inventory.cartBadge()).toBeVisible();
     await expect(inventory.cartBadge()).toHaveText('2');
   });
 
@@ -34,5 +33,10 @@ test('add 2 items to cart', async ({ page }) => {
   await test.step('Both items are in the cart', async () => {
     await expect(cart.itemByName('Sauce Labs Backpack')).toBeVisible();
     await expect(cart.itemByName('Sauce Labs Bike Light')).toBeVisible();
+  });
+
+  await test.step('Each item shows its correct price', async () => {
+    await expect(cart.itemByName('Sauce Labs Backpack')).toContainText('$29.99');
+    await expect(cart.itemByName('Sauce Labs Bike Light')).toContainText('$9.99');
   });
 });

@@ -20,11 +20,11 @@ There are 4 tests across 3 specs.
 
 `cart.spec.ts`
 
-Add Backpack + Bike Light, badge reads 2, both items show up on the cart page.
+Add Backpack + Bike Light, badge reads 2, both items show up on the cart page with their prices ($29.99, $9.99).
 
 `checkout.spec.ts`
 
-Login through to the "Thank you for your order!" confirmation.
+Login through to the order overview (checks the item is listed and the total) and the "Thank you for your order!" confirmation.
 
 1 POM per screen in `pages/` (Login, Inventory, Cart, Checkout).
 1 spec per feature in `tests/`.

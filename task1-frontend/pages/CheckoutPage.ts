@@ -10,6 +10,11 @@ export class CheckoutPage {
   finishButton = () => this.page.getByTestId('finish');
   completeHeader = () => this.page.getByTestId('complete-header');
 
+  subtotalLabel = () => this.page.getByTestId('subtotal-label');
+  taxLabel = () => this.page.getByTestId('tax-label');
+  totalLabel = () => this.page.getByTestId('total-label');
+  orderItem = (name: string) => this.page.getByTestId('cart-list').getByText(name);
+
   async fillShipping(first: string, last: string, zip: string) {
     await this.firstName().fill(first);
     await this.lastName().fill(last);

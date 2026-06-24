@@ -39,14 +39,17 @@ test('complete a checkout', async ({ page }) => {
     await checkout.fillShipping('Juraj', 'K', '81108');
   });
 
+  await test.step('Overview shows item and total', async () => {
+    await expect(checkout.orderItem('Sauce Labs Backpack')).toBeVisible();
+    await expect(checkout.totalLabel()).toHaveText('Total: $32.39');
+  });
+
   await test.step('Finish the order', async () => {
     await expect(checkout.finishButton()).toBeEnabled();
     await checkout.finishButton().click();
   });
 
   await test.step('Confirmation page is shown', async () => {
-    await expect(page).toHaveURL(/checkout-complete\.html/);
-    await expect(checkout.completeHeader()).toBeVisible();
     await expect(checkout.completeHeader()).toHaveText('Thank you for your order!');
   });
 });

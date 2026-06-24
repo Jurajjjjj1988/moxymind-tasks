@@ -12,6 +12,6 @@ export default defineConfig({
   },
   projects: [
     { name: 'iPhone 13', use: { ...devices['iPhone 13'] } },
-    { name: 'Pixel 5', use: { ...devices['Pixel 5'] } },
+    { name: 'Galaxy S24', use: { ...devices['Galaxy S24'] } },
   ],
 });

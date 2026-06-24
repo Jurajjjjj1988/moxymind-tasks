@@ -6,7 +6,7 @@ export class MobileHomePage {
   readonly menuDrawer: Locator;
 
   constructor(private readonly page: Page) {
-    this.searchTrigger = page.locator('header').getByRole('button', { name: /search/i }).first();
+    this.searchTrigger = page.locator('header').getByRole('button', { name: 'search' }).first();
     this.menuToggle = page.locator('#main-menu-input');
     this.menuDrawer = page.locator('.toggle-list__list, #mw-mf-page-left, nav.menu').first();
   }

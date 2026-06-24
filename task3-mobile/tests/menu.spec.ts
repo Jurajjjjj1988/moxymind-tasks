@@ -21,7 +21,7 @@ test('mobile hamburger menu opens with primary nav links', async ({ page }) => {
   });
 
   await test.step('Primary nav links are visible', async () => {
-    await expect(page.getByRole('link', { name: /^Home$/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Random/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Random' })).toBeVisible();
   });
 });

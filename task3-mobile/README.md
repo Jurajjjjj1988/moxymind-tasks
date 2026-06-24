@@ -1,7 +1,7 @@
 # task3
 
 Playwright device emulation on the mobile Wikipedia site (`en.m.wikipedia.org`).
-2 projects in the config: iPhone 13 (WebKit) and Pixel 5 (Chromium), so each spec runs twice, once per device.
+2 projects in the config: iPhone 13 (WebKit) and Galaxy S24 (Chromium), so each spec runs twice, once per device.
 
 Mobile web instead of a native app.
 No Android SDK, no Appium server in the loop.
